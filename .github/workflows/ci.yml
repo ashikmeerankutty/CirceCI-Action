@@ -1,0 +1,19 @@
+name: Beta deployment
+on:
+  pull_request:
+   types:
+    - closed
+jobs:
+  merged_pr_job:
+    if: github.event.pull_request.merged && contains(github.event.pull_request.labels.*.name, 'BETA Deployment')
+    runs-on: ubuntu-latest
+    name: Deploy to Beta environment
+    steps:
+    - uses: actions/checkout@v2
+    - name: Trigger deployment
+      id: curl-circle-ci
+      uses: Open-Source-Contrib/circle-ci-trigger-action@latest
+      with:
+        circle_ci_token: ${{ secrets.CIRCLE_CI_TOKEN }}
+        circle_ci_job: ${{ secrets.CIRCLE_CI_JOB }}
+        circle_ci_project_url: ${{ github.event.pull_request.head.ref }}
